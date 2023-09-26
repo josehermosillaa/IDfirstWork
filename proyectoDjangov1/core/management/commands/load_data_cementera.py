@@ -12,7 +12,9 @@ from pandas.api.types import is_object_dtype
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        today = datetime.now()
+        #podemos darle fechas que queramos
+        # today = datetime.now()
+        today = datetime(2022,12,1)
         r = requests.get(
         f'https://transparenciachc.blob.core.windows.net/lic-da/{today.year}-{today.month}.zip')
         z = zipfile.ZipFile(io.BytesIO(r.content))
@@ -61,7 +63,8 @@ class Command(BaseCommand):
                     linea=suma_monto_linea[0].item(), 
                     cantidad=suma_cantidad_adjudica[0].item(), 
                     cuenta=int(cantidad_monto_linea[0].item()),
-                    codigo_fecha=f'{today.month}-{today.year}'
+                    codigo_fecha=f'{today.month}-{today.year}',
+                    monto_linea=suma_monto_linea[0].item(),
                     )
                 suma_monto_linea = []
                 cantidad_monto_linea = []

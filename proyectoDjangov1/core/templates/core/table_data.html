@@ -1,10 +1,25 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 {% block content %}
+    <div class="row">
+        <div class="col-5 text-center ">
+            <form action="post">
+                {% csrf_token %}
+                <label for="month">Mes</label>
+                {{form.month}}
+                <label for="year">Año</label>
+                {{form.year}}
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        </div>
+    </div>
     <div class="row">
         <div class="col text-center fs-4">
             <p>Segun los datos registrados a la fecha {{today}} se obtiene la siguiente información</p>
         </div>
+    </div>
+    <div class="row">
         <table class="table">
             <thead>
                 <tr>
@@ -18,7 +33,7 @@
                 {% for cementera in data  %}
                 <tr>
                     <th scope="row">{{cementera.nombre}}</th>
-                    <td style = "text-align: center;">{{cementera.linea}}</td>
+                    <td style = "text-align: center;">{{cementera.monto_linea}}</td>
                     <td style = "text-align: center;">{{cementera.cantidad}}</td>
                     <td style = "text-align: center;">{{cementera.cuenta}}</td>
                 {% endfor %}
@@ -33,6 +48,8 @@
             
             
           </table>
+    </div>
+        
     </div>
 </div>
 

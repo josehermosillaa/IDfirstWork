@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     #my apps
     "core",
+    'django.contrib.humanize',
     #third apps
     'django_cron',
+    'djmoney',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +141,6 @@ CRON_CLASSES = [
     "core.cron.MyCronJob",
     # ...
 ]
+
+#intcomma
+USE_THOUSAND_SEPARATOR = True
