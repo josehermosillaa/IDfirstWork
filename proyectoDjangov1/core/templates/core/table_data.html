@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div class="row">
+        <div class="col text-center fs-4">
+            <p>Segun los datos registrados a la fecha {{today}} se obtiene la siguiente información</p>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col">Nombre producto genérico</th>
+                  <th scope="col">Suma de MontoLineaAdjudicada</th>
+                  <th scope="col">Suma de CantidadAdjudicada</th>
+                  <th scope="col">Cuenta MontoLineaAdjudicada</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cementera in data  %}
+                <tr>
+                    <th scope="row">{{cementera.nombre}}</th>
+                    <td style = "text-align: center;">{{cementera.linea}}</td>
+                    <td style = "text-align: center;">{{cementera.cantidad}}</td>
+                    <td style = "text-align: center;">{{cementera.cuenta}}</td>
+                {% endfor %}
+                  
+                </tbody>
+          </table>
+        
+    </div>
+    <div class="row p-4">
+    <div class="col">
+        <table class="tb" style='width:80%;margin:auto;border: 1px solid #000 !important'>
+            
+            
+          </table>
+    </div>
+</div>
+
+
+
+{% endblock content %}
