@@ -8,10 +8,23 @@ def home(request):
 
 def prueba(request):
     today = datetime.now()
-    data = Cementera.objects.filter(created__year=f'{today.year}',created__month=f'{today.month}')
-    context = {
+    if request.method == 'POST':
+        month = request.POST['month']
+        year = request.POST['year']
+        data = Cementera.objects.filter(codigo_fecha=f'{month}-{year}')
+        context = {
         'data': data,
-        'today':f'{today.day}/{today.month}/{today.year}',
+        'today':f'{month}/{year}',
         'form': DateForm()
-    }
-    return render(request, 'core/table_data.html', context)
+        }
+        return render(request, 'core/table_data.html', context)
+    else:
+    # data = Cementera.objects.filter(created__year=f'{today.year}',created__month=f'{today.month}')
+        data = Cementera.objects.filter(codigo_fecha=f'{today.month}-{today.year}')
+    
+        context = {
+            'data': data,
+            'today':f'{today.day}/{today.month}/{today.year}',
+            'form': DateForm()
+        }
+        return render(request, 'core/table_data.html', context)

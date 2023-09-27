@@ -4,7 +4,7 @@
 {% block content %}
     <div class="row">
         <div class="col-5 text-center ">
-            <form action="post">
+            <form action="" method="post">
                 {% csrf_token %}
                 <label for="month">Mes</label>
                 {{form.month}}

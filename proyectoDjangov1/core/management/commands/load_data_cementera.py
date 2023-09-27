@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         #podemos darle fechas que queramos
         # today = datetime.now()
-        today = datetime(2022,12,1)
+        today = datetime(2023,7,1)
         r = requests.get(
         f'https://transparenciachc.blob.core.windows.net/lic-da/{today.year}-{today.month}.zip')
         z = zipfile.ZipFile(io.BytesIO(r.content))
