@@ -10,7 +10,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         #podemos darle fechas que queramos
         today = datetime.now()
-        count = 0
+        excell_inicial = pd.DataFrame()
+        excell_final = pd.DataFrame()
         # today = datetime(2023,7,1)
         for i in range(1, today.month):
             
@@ -32,6 +33,21 @@ class Command(BaseCommand):
             file_path = f'data/lic_{today.year}-{i}.csv'
             #transformando los datos de la columna a lowercase, para mejorar el filtro
             df = pd.read_csv(file_path, sep = ";", encoding='latin-1', dtype='str')
+            if df.empty:
+                df.to_excel(f'./download/{i}-{today.year}.xlsx', index=False)
+                self.stdout.write(
+                    self.style.WARNING(
+                            f"'ARCHIVO LEIDO VACIO "
+                        )
+                    )
+                self.stdout.write(
+                    self.style.SUCCESS(
+                            f"Se ha creado exitosamente'{i}-{today.year}.xlsx' "
+                        )
+                    )
+                os.remove(file_path)
+                continue
+
             # df = pd.read_csv('data/lic_2022-12.csv', encoding='latin-1')
             df['Nombre producto genrico'] = df['Nombre producto genrico'].apply(lambda x:x.upper()) 
             #filter = """`Nombre producto genrico` == 'CONSTRUCCIÓN DE CASAS'|`Nombre producto genrico` == 'CONSTRUCCIÓN DE ACERAS, VEREDAS, CUNETAS'| `Nombre producto genrico` == 'CONSTRUCCIÓN DE EDIFICIOS Y DEPARTAMENTOS'|`Nombre producto genrico` == 'CONSTRUCCIÓN DE LOCALES, PLANTAS COMERCIALES O INDUSTRIALES'|`Nombre producto genrico` == 'CONSTRUCCIÓN DE MUROS DE CONTENCIÓN'|`Nombre producto genrico` == 'CONSTRUCCIÓN DE OBRAS CIVILES'"""
@@ -81,43 +97,43 @@ class Command(BaseCommand):
             filtered_df2 = df2[df2.apply(filter_by_monto, axis=1)]
             #filtramos por nombres genericos
             filter_nombres = df['Nombre producto genrico'].isin(nombre_producto_generico)
-            excell_inicial = filtered_df2[filter_nombres]
-            
-            # Export the DataFrame to an Excel file
-            excell_inicial.to_excel(f'./download/{i}-{today.year}.xlsx', index=False)
-            self.stdout.write(
-                self.style.SUCCESS(
-                        f"Se ha creado exitosamente'{i}-{today.year}.xlsx' "
+
+            final_df = filtered_df2[filter_nombres]
+            if not final_df.empty and  excell_inicial.empty:
+                excell_inicial = final_df
+                excell_inicial.to_excel(f'./download/{i}-{today.year}.xlsx', index=False)
+                self.stdout.write(
+                    self.style.SUCCESS(
+                            f"Se ha creado exitosamente'{i}-{today.year}.xlsx' "
+                        )
                     )
-                )
-            os.remove(file_path)
+                os.remove(file_path)
+                continue
+            elif not final_df.empty and not excell_inicial.empty:
+                excell_final = final_df
+                comparacion = ~excell_final['CodigoExterno'].isin(excell_inicial['CodigoExterno'])
+                excell_final = excell_final[comparacion]
+                # Export the DataFrame to an Excel file
+                excell_final.to_excel(f'./download/{i}-{today.year}.xlsx', index=False)
+                self.stdout.write(
+                    self.style.SUCCESS(
+                            f"Se ha creado exitosamente'{i}-{today.year}.xlsx' "
+                        )
+                    )
+                os.remove(file_path)
+            elif final_df.empty:
+                final_df.to_excel(f'./download/{i}-{today.year}.xlsx', index=False)
+                self.stdout.write(
+                    self.style.WARNING(
+                            f"'{i}-{today.year}.xlsx' VACIO "
+                        )
+                    )
+                self.stdout.write(
+                    self.style.SUCCESS(
+                            f"Se ha creado exitosamente'{i}-{today.year}.xlsx' "
+                        )
+                    )
+                os.remove(file_path)
 
 
 
-        """Envio Correos"""
-        # if success:
-        #     # data = Cementera.objects.filter(created__year=f'{today.year}',created__month=f'{today.month}')
-        #     data = Cementera.objects.filter(codigo_fecha=f'{today.month}-{today.year}')
-        #     context = {
-        #         'data': data,
-        #         'today':f'{today.day}/{today.month}/{today.year}'
-        #         }
-
-        #     subject = 'Correo de Prueba Cementeras'
-        #     html_message = render_to_string('emails/cementera.html', context)
-        #     plain_message = strip_tags(html_message)
-
-        #     email = EmailMultiAlternatives(
-        #         subject,
-        #         plain_message,
-        #         settings.EMAIL_HOST_USER,
-        #         ['pepe112@gmail.com']
-        #     )
-            
-        #     email.attach_alternative(html_message, 'text/html')
-        #     email.send()
-        #     self.stdout.write(
-        #     self.style.SUCCESS(
-        #             "Se ha enviado tu correo"
-        #         )
-        #     )
